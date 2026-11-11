@@ -4,14 +4,13 @@ from __future__ import annotations
 
 import logging
 import os
-from dataclasses import asdict
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from alpaca.data.enums import Adjustment, DataFeed
+from alpaca.data.enums import DataFeed
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.historical.corporate_actions import CorporateActionsClient
 
@@ -29,61 +28,10 @@ from fin_data.validation.bars import validate_bars
 
 LOGGER = logging.getLogger(__name__)
 
-BAR_COLUMNS = ("open", "high", "low", "close", "volume", "trade_count", "vwap")
-ADJUSTMENTS = {
-    "raw": Adjustment.RAW,
-    "all": Adjustment.ALL,
-}
-
 
 def default_end_date() -> date:
     """Return the previous calendar day in the US Eastern timezone."""
     return datetime.now(ZoneInfo("America/New_York")).date() - timedelta(days=1)
-
-
-def normalize_bars(frame: pd.DataFrame, symbol: str) -> pd.DataFrame:
-    """Normalize an Alpaca BarSet DataFrame to a timestamp-indexed frame."""
-    if frame.empty:
-        return pd.DataFrame(columns=list(BAR_COLUMNS), index=pd.DatetimeIndex([], name="timestamp"))
-
-    normalized = frame.copy()
-
-    if isinstance(normalized.index, pd.MultiIndex):
-        index_names = normalized.index.names
-
-        symbol_level = index_names.index("symbol") if "symbol" in index_names else 0
-
-        timestamp_level = index_names.index("timestamp") if "timestamp" in index_names else 1 - symbol_level
-
-        symbol_mask = normalized.index.get_level_values(symbol_level) == symbol
-
-        normalized = normalized.loc[symbol_mask].copy()
-
-        normalized.index = pd.DatetimeIndex(normalized.index.get_level_values(timestamp_level))
-
-    normalized.index = pd.DatetimeIndex(
-        pd.to_datetime(normalized.index, utc=True),
-        name="timestamp",
-    )
-    normalized = normalized.sort_index()
-    normalized = normalized.loc[~normalized.index.duplicated(keep="last")]
-
-    for column in BAR_COLUMNS:
-        if column not in normalized.columns:
-            normalized[column] = pd.NA
-
-    normalized = normalized.loc[:, list(BAR_COLUMNS)]
-    for column in BAR_COLUMNS:
-        normalized[column] = pd.to_numeric(normalized[column], errors="coerce")
-
-    normalized["volume"] = normalized["volume"].astype("float64")
-    normalized["trade_count"] = normalized["trade_count"].astype("float64")
-    return normalized
-
-
-def _instrument_frame(instruments: tuple[Instrument, ...]) -> pd.DataFrame:
-    rows = [asdict(item) for item in instruments]
-    return pd.DataFrame(rows).set_index("symbol")
 
 
 class AlpacaDatasetIngestor:

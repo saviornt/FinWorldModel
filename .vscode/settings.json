@@ -1,0 +1,25 @@
+{
+    // Uncomment and set the path to your virtual environment's Python interpreter if needed
+    // "python.defaultInterpreterPath": "/.venv/bin/python",
+
+    "ruff.enable": true,
+    "ruff.lint.enable": true,
+
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        }
+    },
+
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": ["tests"],
+
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true
+}

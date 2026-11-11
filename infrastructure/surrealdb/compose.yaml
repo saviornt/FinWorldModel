@@ -1,0 +1,31 @@
+
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v4.0
+    container_name: finworldmodel-surrealdb
+    restart: unless-stopped
+
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    env_file:
+      - .env
+
+    volumes:
+      - surrealdb-data:/data
+      - ./schema/schema.surql:/schema.surql:ro
+
+    command:
+      - start
+      - --import-file
+      - /schema.surql
+      - surrealkv:/data/finworldmodel.db
+
+    healthcheck:
+      test: ["CMD", "/surreal", "is-ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  surrealdb-data:

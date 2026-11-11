@@ -1,0 +1,101 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "FinWorldModel"
+version = "0.0.1"
+description = "A financial world model research and experimentation framework."
+readme = "README.md"
+requires-python = ">=3.14.9,<3.15"
+dependencies = [
+    "pydantic>=2.0",
+    "httpx2",
+    "arcticdb",
+    "surrealdb[pydantic]",
+    "numpy",
+    "pandas",
+    "scipy",
+    "scikit-learn",
+    "torch-geometric",
+    "alpaca-py>=0.45.0",
+]
+
+[project.optional-dependencies]
+cpu = [
+    "torch>=2.15.0",
+]
+cu132 = [
+    "torch>=2.15.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+    "pyright",
+    "pandas-stubs",
+]
+
+research = [
+    "mlflow",
+]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 125
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "TCH", "RUF"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.pyright]
+pythonVersion = "3.14"
+typeCheckingMode = "basic"
+reportMissingTypeStubs = "none"
+include = ["src", "tests", "scripts"]
+exclude = [".venv", "__pycache__"]
+extraPaths = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+markers = [
+    "gpu: tests requiring a supported GPU backend",
+]
+
+[tool.uv]
+package = false
+
+conflicts = [
+    [
+        {extra = "cpu"},
+        {extra = "cu132"}
+    ]
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu132", extra = "cu132" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu132"
+url = "https://download.pytorch.org/whl/cu132"
+explicit = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fin_worldmodel", "src/fin_baseline", "src/fin_data"]

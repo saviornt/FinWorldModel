@@ -1,0 +1,19 @@
+filters:
+  and:
+    - file.inFolder("01 Research/Lit Notes")
+    - type == "lit-note"
+views:
+  - type: table
+    name: All sources
+    order:
+      - file.name
+      - evidence
+      - score
+      - family
+      - research_questions
+      - papers
+      - year
+      - venue
+    sort:
+      - property: score
+        direction: DESC

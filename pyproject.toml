@@ -35,6 +35,7 @@ dev = [
     "ruff",
     "pyright",
     "pandas-stubs",
+    "ipykernel",
 ]
 
 research = [

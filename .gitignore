@@ -15,11 +15,8 @@ __pycache__/
 # Environment files and secrets
 .env
 
-# Local financial datasets
-/data/arcticdb/
-/data/raw/
-/data/processed/
-/data/metadata/
+# Local datasets and database storage
+/data/
 
 # Runtime output
 /logs/

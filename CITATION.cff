@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: >-
+  Please cite Financial World Model when referencing this
+  research and software project.
+title: "Financial World Model"
+abstract: >-
+  A research and software project investigating financial
+  world modeling, market behavior, forecasting, volatility,
+  risk, and adaptive learning.
+authors:
+  - family-names: "Wadsworth"
+    given-names: "David M."
+version: "0.1.0"
+date-released: "2026-11-11"
+repository-code: "https://github.com/saviornt/FinWorldModel"
+license: "LicenseRef-FWRRL-1.0"

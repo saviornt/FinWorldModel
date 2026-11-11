@@ -6,6 +6,12 @@ __pycache__/
 *.pyc
 *.pyd
 
+# Ruff cache
+.ruff_cache/
+
+# Pytest cache
+.pytest_cache/
+
 # Environment files and secrets
 .env
 
